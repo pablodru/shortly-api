@@ -35,7 +35,15 @@ export async function getUrlById (req, res) {
 }
 
 export async function redirectUrl (req, res) {
+    const { shortUrl } = req.params;
     try {
+
+        const result = await db.query(
+            `UPDATE urls SET "visitCount"="visitCount" + 1 WHERE id=$1 RETURNING url`, [id]
+        );
+        if ( result.rowCount === 0 ) return res.sendStatus(404);
+
+        res.redirect(result.rows[0].url);
 
     } catch (err) {
         res.status(500).send(err.message);
