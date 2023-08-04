@@ -6,11 +6,11 @@ export async function postShortUrl (req, res) {
     try {
 
         const shortUrl = nanoid(8);
-        await db.query(
-            `INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3)`, [res.locals.userId, url, shortUrl]
+        const result = await db.query(
+            `INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3) RETURNING id, "shortUrl"`, [res.locals.userId, url, shortUrl]
         );
 
-        res.sendStatus(201);
+        res.status(201).send(result.rows[0]);
 
     } catch (err) {
         res.status(500).send(err.message);
