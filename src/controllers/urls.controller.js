@@ -1,14 +1,13 @@
 import { nanoid } from "nanoid";
 import { db } from "../database/database.connection.js";
+import { deleteUrlDB, getUrlByIdDB, getUserIdByIdDB, insertUrlDB, redirectUrlDB } from "../repositories/urls.repository.js";
 
 export async function postShortUrl (req, res) {
     const { url } = req.body;
     try {
 
         const shortUrl = nanoid(8);
-        const result = await db.query(
-            `INSERT INTO urls ("userId", url, "shortUrl") VALUES ($1, $2, $3) RETURNING id, "shortUrl"`, [res.locals.userId, url, shortUrl]
-        );
+        const result = insertUrlDB(res.locals.userId, url, shortUrl);
 
         res.status(201).send(result.rows[0]);
 
@@ -21,9 +20,7 @@ export async function getUrlById (req, res) {
     const { id } = req.params;
     try {
 
-        const url = await db.query(
-            `SELECT id, "shortUrl", url FROM urls WHERE id=$1`, [id]
-        );
+        const url = getUrlByIdDB(id);
 
         if ( url.rowCount === 0 ) return res.sendStatus(404);
 
@@ -38,9 +35,7 @@ export async function redirectUrl (req, res) {
     const { shortUrl } = req.params;
     try {
 
-        const result = await db.query(
-            `UPDATE urls SET "visitCount"="visitCount" + 1 WHERE "shortUrl"=$1 RETURNING url`, [shortUrl]
-        );
+        const result = redirectUrlDB(shortUrl);
         console.log(result)
         if ( result.rowCount === 0 ) return res.sendStatus(404);
 
@@ -55,16 +50,12 @@ export async function deleteUrl (req, res) {
     const { id } = req.params;
     try {
 
-        const existingUrl = await db.query(
-            `SELECT "userId" FROM urls WHERE id=$1;`, [id]
-        );
+        const existingUrl = getUserIdByIdDB(id);
         if ( existingUrl.rowCount === 0 ) return res.sendStatus(404);
 
         if ( existingUrl.rows[0].userId !== res.locals.userId ) return res.sendStatus(401);
 
-        await db.query(
-            `DELETE FROM urls WHERE id=$1;`, [id]
-        );
+        deleteUrlDB(id);
 
         res.sendStatus(204);
 
