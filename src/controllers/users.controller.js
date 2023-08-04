@@ -5,8 +5,14 @@ export async function getUrlsByUser (req, res) {
     try {
 
         const result = await db.query(
-            `SELECT urls."userId", users.name, SUM(urls."visitCount") AS "visitCount"`
-        )
+            `SELECT users.id, users.name, SUM(urls."visitCount") AS "visitCount", 
+                json_agg(json_build_object('id', urls.id, 'shortUrl', urls."shortUrl", 'url', urls.url, 'visitCount', urls."visitCount")) AS "shortenedUrls"
+                FROM users JOIN urls ON users.id = urls."userId"
+                WHERE users.id = $1
+                GROUP BY users.id`, [userId]
+        );
+
+        res.status(200).send(result.rows[0]);
 
     } catch (err) {
         res.status(500).send(err.message);
