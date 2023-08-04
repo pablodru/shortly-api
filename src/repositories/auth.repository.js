@@ -15,3 +15,9 @@ export async function signinDB( userId, token ) {
                 `INSERT INTO sessions ("userId", token) VALUES ($1, $2)`, [userId, token]
             );
 }
+
+export async function authValidationDB( token ) {
+    return  await db.query(
+                `SELECT "userId" FROM sessions WHERE token = $1`, [token]
+            );
+}
