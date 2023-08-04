@@ -39,8 +39,9 @@ export async function redirectUrl (req, res) {
     try {
 
         const result = await db.query(
-            `UPDATE urls SET "visitCount"="visitCount" + 1 WHERE id=$1 RETURNING url`, [id]
+            `UPDATE urls SET "visitCount"="visitCount" + 1 WHERE "shortUrl"=$1 RETURNING url`, [shortUrl]
         );
+        console.log(result)
         if ( result.rowCount === 0 ) return res.sendStatus(404);
 
         res.redirect(result.rows[0].url);
