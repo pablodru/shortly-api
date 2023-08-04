@@ -5,7 +5,7 @@ export async function getUrlsByUser (req, res) {
     const { userId } = res.locals;
     try {
 
-        const result = getUrlsByUserDB(userId);
+        const result = await getUrlsByUserDB(userId);
 
         res.status(200).send(result.rows[0]);
 
@@ -17,7 +17,7 @@ export async function getUrlsByUser (req, res) {
 export async function ranking (req, res) {
     try {
 
-        const result = getRankingDB();
+        const result = await getRankingDB();
 
         res.send(result.rows)
 

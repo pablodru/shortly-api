@@ -9,7 +9,7 @@ export async function signup (req, res) {
 
         const hash = bcrypt.hashSync(password, 10);
 
-        signupDB(name, email, hash);
+        await signupDB(name, email, hash);
 
         res.sendStatus(201);
 
@@ -22,7 +22,7 @@ export async function signin (req, res) {
     try {
 
         const token = uuid();
-        signinDB(res.locals.userId, token);
+        await signinDB(res.locals.userId, token);
 
         res.status(200).send({ token });
 

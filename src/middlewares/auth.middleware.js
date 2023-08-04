@@ -10,7 +10,7 @@ export async function signupValidation(req, res, next) {
         if ( password !== confirmPassword ) return res.sendStatus(422);
 
         //409 EMAIL JÁ CADASTRADO
-        const existingEmail = validateUserByEmailDB(email);
+        const existingEmail = await validateUserByEmailDB(email);
         if ( existingEmail.rowCount > 0 ) return res.sendStatus(409);
 
         next();
@@ -25,7 +25,7 @@ export async function signinValidation(req, res, next) {
     try {
 
         //401 EM CASO DE EMAIL E SENHA NÃO BATEREM
-        const existingUser = validateUserByEmailDB(email);
+        const existingUser = await validateUserByEmailDB(email);
         if ( existingUser.rowCount === 0 ) return res.sendStatus(401);
 
         const correctPassword = bcrypt.compareSync(password, existingUser.rows[0].password);

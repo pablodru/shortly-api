@@ -9,7 +9,7 @@ export async function authValidation(req, res, next) {
     try {
 
         //PROCURAR SESSAO NO BANCO E RETORNAR 401 EM CASO DE NÃO TER SESSION
-        const existingSession = authValidationDB(token);
+        const existingSession = await authValidationDB(token);
         if ( existingSession.rowCount === 0 ) return res.sendStatus(401);
 
         res.locals.userId = existingSession.rows[0].userId;

@@ -7,7 +7,7 @@ export async function postShortUrl (req, res) {
     try {
 
         const shortUrl = nanoid(8);
-        const result = insertUrlDB(res.locals.userId, url, shortUrl);
+        const result = await insertUrlDB(res.locals.userId, url, shortUrl);
 
         res.status(201).send(result.rows[0]);
 
@@ -20,7 +20,7 @@ export async function getUrlById (req, res) {
     const { id } = req.params;
     try {
 
-        const url = getUrlByIdDB(id);
+        const url = await getUrlByIdDB(id);
 
         if ( url.rowCount === 0 ) return res.sendStatus(404);
 
@@ -35,7 +35,7 @@ export async function redirectUrl (req, res) {
     const { shortUrl } = req.params;
     try {
 
-        const result = redirectUrlDB(shortUrl);
+        const result = await redirectUrlDB(shortUrl);
         console.log(result)
         if ( result.rowCount === 0 ) return res.sendStatus(404);
 
@@ -50,12 +50,12 @@ export async function deleteUrl (req, res) {
     const { id } = req.params;
     try {
 
-        const existingUrl = getUserIdByIdDB(id);
+        const existingUrl = await getUserIdByIdDB(id);
         if ( existingUrl.rowCount === 0 ) return res.sendStatus(404);
 
         if ( existingUrl.rows[0].userId !== res.locals.userId ) return res.sendStatus(401);
 
-        deleteUrlDB(id);
+        await deleteUrlDB(id);
 
         res.sendStatus(204);
 
