@@ -1,5 +1,6 @@
 import { db } from "../database/database.connection.js";
 import bcrypt from 'bcrypt';
+import { validateUserByEmailDB } from "../repositories/auth.repository.js";
 
 export async function signupValidation(req, res, next) {
     const { name, email, password, confirmPassword } = req.body;
@@ -9,7 +10,7 @@ export async function signupValidation(req, res, next) {
         if ( password !== confirmPassword ) return res.sendStatus(422);
 
         //409 EMAIL JÁ CADASTRADO
-        const existingEmail = await db.query(`SELECT * FROM users WHERE email=$1;`, [email]);
+        const existingEmail = validateUserByEmailDB(email);
         if ( existingEmail.rowCount > 0 ) return res.sendStatus(409);
 
         next();
@@ -24,9 +25,7 @@ export async function signinValidation(req, res, next) {
     try {
 
         //401 EM CASO DE EMAIL E SENHA NÃO BATEREM
-        const existingUser = await db.query(
-            `SELECT id, password FROM users WHERE email=$1`, [email]
-        );
+        const existingUser = validateUserByEmailDB(email);
         if ( existingUser.rowCount === 0 ) return res.sendStatus(401);
 
         const correctPassword = bcrypt.compareSync(password, existingUser.rows[0].password);
