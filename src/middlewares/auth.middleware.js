@@ -27,7 +27,7 @@ export async function signinValidation(req, res, next) {
         const existingUser = await db.query(
             `SELECT id, password FROM users WHERE email=$1`, [email]
         );
-        if ( existingUser.rowCount === 0 ) return res.sendStatus(404);
+        if ( existingUser.rowCount === 0 ) return res.sendStatus(401);
 
         const correctPassword = bcrypt.compareSync(password, existingUser.rows[0].password);
         if ( !correctPassword ) return res.sendStatus(401);
