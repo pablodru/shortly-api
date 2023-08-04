@@ -51,7 +51,21 @@ export async function redirectUrl (req, res) {
 }
 
 export async function deleteUrl (req, res) {
+    const { id } = req.params;
     try {
+
+        const existingUrl = await db.query(
+            `SELECT "userId" FROM urls WHERE id=$1;`, [id]
+        );
+        if ( existingUrl.rowCount === 0 ) return res.sendStatus(404);
+
+        if ( existingUrl.rows[0].userId !== res.locals.userId ) return res.sendStatus(401);
+
+        await db.query(
+            `DELETE FROM urls WHERE id=$1;`, [id]
+        );
+
+        res.sendStatus(204);
 
     } catch (err) {
         res.status(500).send(err.message);
