@@ -28,7 +28,7 @@ CREATE TABLE public.sessions (
     id integer NOT NULL,
     "userId" integer NOT NULL,
     token text NOT NULL,
-    "createdAt" date DEFAULT CURRENT_DATE NOT NULL
+    "createdAt" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -62,7 +62,7 @@ CREATE TABLE public.urls (
     url text NOT NULL,
     "shortUrl" text NOT NULL,
     "visitCount" integer DEFAULT 0 NOT NULL,
-    "createdAt" date DEFAULT CURRENT_DATE NOT NULL
+    "createdAt" timestamp DEFAULT TIMESTAMP NOT NULL
 );
 
 
@@ -95,7 +95,7 @@ CREATE TABLE public.users (
     name text NOT NULL,
     email text NOT NULL,
     password text NOT NULL,
-    "createdAt" date DEFAULT CURRENT_DATE NOT NULL
+    "createdAt" timestamp DEFAULT TIMESTAMP NOT NULL
 );
 
 
