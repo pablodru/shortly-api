@@ -8,8 +8,8 @@ import { deleteUrlValidation, searchShortUrlValidation, searchUrlByIdValidation 
 
 const urlRouter = Router();
 
-urlRouter.post('/urls/shorten', authValidation, validateSchema(urlSchema), searchUrlByIdValidation, postShortUrl);
-urlRouter.get('/urls/:id', getUrlById);
+urlRouter.post('/urls/shorten', authValidation, validateSchema(urlSchema), postShortUrl);
+urlRouter.get('/urls/:id', searchUrlByIdValidation, getUrlById);
 urlRouter.get('/urls/open/:shortUrl', searchShortUrlValidation, redirectUrl);
 urlRouter.delete('/urls/:id', authValidation, deleteUrlValidation, deleteUrl);
 
